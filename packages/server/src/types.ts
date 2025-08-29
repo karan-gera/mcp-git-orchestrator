@@ -336,6 +336,44 @@ export interface ConflictRegion {
   conflictMarkers: number;
 }
 
+// Conflict Map Types
+export interface ConflictMapResult {
+  conflictedFiles: ConflictFile[];
+  totalConflicts: number;
+  resolutionOrder: string[];
+  suggestions: ResolutionSuggestion[];
+}
+
+export interface ConflictFile {
+  path: string;
+  conflicts: ConflictMarker[];
+  totalConflicts: number;
+  conflictDensity: number;
+  fileSize: number;
+  priority: number;
+}
+
+export interface ConflictMarker {
+  startLine: number;
+  endLine: number;
+  separatorLine?: number;
+  oursBranch: string;
+  theirsBranch: string;
+  oursLines: string[];
+  theirsLines: string[];
+  baseLines?: string[];
+  size: number;
+  complexity: 'low' | 'medium' | 'high';
+}
+
+export interface ResolutionSuggestion {
+  type: 'general' | 'file-specific' | 'conflict-specific' | 'strategy' | 'tool';
+  priority: 'low' | 'medium' | 'high';
+  title: string;
+  description: string;
+  files: string[];
+}
+
 // Git Command Types (for allowlist)
 export type AllowedGitCommand = 
   | 'status'

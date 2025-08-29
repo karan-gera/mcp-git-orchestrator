@@ -14,3 +14,4 @@ export { CommitTool } from './commit.js';
 export { PushTool } from './push.js';
 export { BranchTool } from './branch.js';
 export { MergeTool } from './merge.js';
+export { ConflictMapTool } from './conflict_map.js';
