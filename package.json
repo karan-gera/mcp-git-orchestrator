@@ -12,7 +12,10 @@
     "dev": "pnpm -r --parallel dev",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
-    "clean": "pnpm -r clean"
+    "clean": "pnpm -r clean",
+    "start": "pnpm --filter cli start",
+    "serve": "pnpm --filter cli serve",
+    "manifest": "pnpm --filter cli manifest"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

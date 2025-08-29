@@ -12,6 +12,21 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
+// Import all our tools
+import {
+  RepoOverviewTool,
+  StatusTool,
+  DiffTool,
+  ProposeCommitTool,
+  StageTool,
+  CommitTool,
+  PushTool,
+  BranchTool,
+  MergeTool,
+  ConflictMapTool,
+  DryRunTool
+} from './tools/index.js';
+
 const server: Server = new Server(
   {
     name: 'mcp-git-orchestrator',
@@ -24,67 +39,77 @@ const server: Server = new Server(
   }
 );
 
-// Tool definitions placeholder
+// Initialize all tools
+const tools = {
+  repo_overview: new RepoOverviewTool(),
+  status: new StatusTool(),
+  diff: new DiffTool(),
+  propose_commit: new ProposeCommitTool(),
+  stage: new StageTool(),
+  commit: new CommitTool(),
+  push: new PushTool(),
+  branch: new BranchTool(),
+  merge: new MergeTool(),
+  conflict_map: new ConflictMapTool(),
+  dry_run: new DryRunTool()
+};
+
+// Register tool list handler
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
-    tools: [
-      {
-        name: 'repo_overview',
-        description: 'Get repository overview with branch, head, and remote information',
-        inputSchema: {
-          type: 'object',
-          properties: {},
-        },
-      },
-      {
-        name: 'status',
-        description: 'Get Git status showing staged, unstaged, and untracked files',
-        inputSchema: {
-          type: 'object',
-          properties: {},
-        },
-      },
-    ],
+    tools: Object.entries(tools).map(([name, tool]) => ({
+      name,
+      description: tool.getDescription(),
+      inputSchema: tool.getInputSchema(),
+    })),
   };
 });
 
-// Tool execution placeholder
+// Register tool execution handler
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  const { name } = request.params;
+  const { name, arguments: args } = request.params;
 
-  switch (name) {
-    case 'repo_overview':
+  // Get the tool
+  const tool = tools[name as keyof typeof tools];
+  if (!tool) {
+    throw new Error(`Unknown tool: ${name}`);
+  }
+
+  try {
+    // Execute the tool with proper type casting
+    const result = await tool.execute(args as any || {});
+
+    if (result.success) {
       return {
         content: [
           {
             type: 'text',
-            text: JSON.stringify({
-              root: process.cwd(),
-              branch: 'main',
-              head: 'HEAD',
-              remotes: [],
-              aheadBehind: { ahead: 0, behind: 0 }
-            }, null, 2)
+            text: `✅ ${result.summary}\n\n${JSON.stringify(result.data, null, 2)}`
           }
         ]
       };
-
-    case 'status':
+    } else {
       return {
         content: [
           {
-            type: 'text', 
-            text: JSON.stringify({
-              staged: [],
-              unstaged: [],
-              untracked: []
-            }, null, 2)
+            type: 'text',
+            text: `❌ Error: ${result.error}\n\nDetails: ${JSON.stringify(result.metadata || {}, null, 2)}`
           }
-        ]
+        ],
+        isError: true
       };
-
-    default:
-      throw new Error(`Unknown tool: ${name}`);
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return {
+      content: [
+        {
+          type: 'text',
+          text: `💥 Tool execution failed: ${errorMessage}`
+        }
+      ],
+      isError: true
+    };
   }
 });
 
@@ -92,6 +117,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error('MCP Git Orchestrator server running on stdio');
+  console.error(`Tools available: ${Object.keys(tools).join(', ')}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
