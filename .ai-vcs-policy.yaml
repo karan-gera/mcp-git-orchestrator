@@ -1,152 +1,259 @@
 # AI VCS Policy Configuration
-# This file defines how AI agents should interact with this Git repository
-# See: https://github.com/mcp-git-orchestrator/docs for full documentation
+# Complete configuration file for MCP Git Orchestrator
 
-version: "1.0"
-
-# Branches that require special protection (no direct pushes, require PRs)
+# Branch Protection
 protected_branches:
-  - "main"
-  - "master" 
-  - "develop"
-  - "production"
-  - "release/*"
+  - main
+  - master
+  - develop
+  - release/*
+  - hotfix/*
 
-# Default base branch for new feature branches
-default_base: "main"
+# Default base branch for new features and PRs
+default_base: main
 
-# Commit message style enforcement
+# Commit Message Conventions
 commit_style:
-  # Enforce conventional commits format (type(scope): description)
+  # Enforce Conventional Commits specification
   enforce_conventional: true
   
   # Allowed commit types
   allowed_types:
-    - "feat"      # New feature
-    - "fix"       # Bug fix
-    - "docs"      # Documentation changes
-    - "style"     # Code style changes (formatting, etc.)
-    - "refactor"  # Code refactoring
-    - "perf"      # Performance improvements
-    - "test"      # Adding or updating tests
-    - "chore"     # Maintenance tasks
-    - "ci"        # CI/CD changes
-    - "build"     # Build system changes
-    - "revert"    # Revert previous commits
+    - feat        # New features
+    - fix         # Bug fixes
+    - docs        # Documentation changes
+    - style       # Code style changes (formatting, etc.)
+    - refactor    # Code refactoring
+    - perf        # Performance improvements
+    - test        # Adding or updating tests
+    - chore       # Maintenance tasks
+    - ci          # CI/CD changes
+    - build       # Build system changes
+    - revert      # Reverting previous commits
   
   # Require scope in commit messages (e.g., feat(auth): add login)
   require_scope: false
   
-  # Maximum length for commit subject line
-  max_subject_length: 72
+  # Maximum commit message length
+  max_length: 72
   
-  # Commit types that require a detailed body
+  # Require body for certain types
   require_body_for:
-    - "feat"
-    - "fix"
-    - "perf"
-    - "refactor"
+    - feat
+    - fix
   
-  # Required commit trailers (e.g., Signed-off-by, Co-authored-by)
-  required_trailers: []
+  # Custom validation patterns
+  patterns:
+    # Require issue reference for certain types
+    require_issue_ref: true
+    issue_pattern: "(?:Close|Closes|Fix|Fixes|Resolve|Resolves)\\s+#\\d+"
 
-# Branch naming conventions
+# Branch Naming Conventions
 branch_naming:
-  # Regex pattern for valid branch names
-  pattern: "^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|hotfix|release)\/[a-z0-9-]+$"
-  
-  # Allowed prefixes for branch names
-  allowed_prefixes:
-    - "feat/"
-    - "fix/"
-    - "docs/"
-    - "style/"
-    - "refactor/"
-    - "perf/"
-    - "test/"
-    - "chore/"
-    - "ci/"
-    - "build/"
-    - "hotfix/"
-    - "release/"
+  # Allowed branch name pattern (regex)
+  pattern: "^(feature|feat|bugfix|fix|hotfix|chore|docs|refactor|perf|test|ci)\/[a-z0-9-]+$"
   
   # Maximum branch name length
   max_length: 50
   
-  # Forbidden patterns in branch names
-  forbidden_patterns:
-    - ".*[A-Z].*"        # No uppercase letters
-    - ".*[_].*"          # No underscores
-    - ".*[-]{2,}.*"      # No multiple consecutive dashes
-    - "^[0-9].*"         # Cannot start with number
-    - ".*[.].*"          # No dots
+  # Examples for documentation
+  examples:
+    - "feature/user-authentication"
+    - "fix/login-validation-error"
+    - "hotfix/critical-security-patch"
+    - "chore/update-dependencies"
+    - "docs/api-documentation"
+    - "refactor/database-layer"
+    - "perf/optimize-queries"
+    - "test/integration-suite"
+    - "ci/github-actions-setup"
 
-# Force push restrictions (strongly recommended: true)
+# Force Push Protection
 deny_force_push: true
 
-# Pre-push validation checks
+# Pre-push Validation Checks
 prepush_checks:
-  - name: "lint"
-    command: "pnpm lint"
+  # Run tests before pushing
+  - name: "npm test"
+    required: true
+    timeout: 300  # 5 minutes
+    
+  # Run linting
+  - name: "npm run lint"
+    required: false
+    timeout: 60   # 1 minute
+    
+  # Type checking for TypeScript projects
+  - name: "npm run type-check"
+    required: true
+    timeout: 120  # 2 minutes
+    
+  # Build verification
+  - name: "npm run build"
+    required: false
+    timeout: 180  # 3 minutes
+    
+  # Security audit
+  - name: "npm audit --audit-level=moderate"
     required: false
     timeout: 60
-    cwd: "."
-  
-  - name: "test"
-    command: "pnpm test"
-    required: false
-    timeout: 300
-    cwd: "."
-  
-  - name: "build"
-    command: "pnpm build"
-    required: true
-    timeout: 180
-    cwd: "."
 
-# Merge strategy preferences
-merge_strategy:
-  # Default strategy for merging branches
-  default_strategy: "merge"  # Options: merge, rebase, squash
-  
-  # Require pull request for protected branches
-  require_pr: true
-  
-  # Automatically delete feature branches after successful merge
-  auto_delete_merged: false
-  
-  # Require clean working tree before merge
-  require_clean_tree: true
+# Merge Strategy Configuration
+merge_strategy: "merge"  # Options: merge, rebase, squash
 
-# Automatic safety snapshot settings
+# Advanced Merge Settings
+merge_settings:
+  # Require clean history for merges
+  require_clean_history: true
+  
+  # Automatically delete feature branches after merge
+  auto_delete_branches: true
+  
+  # Require up-to-date branch before merge
+  require_up_to_date: true
+
+# Safety Snapshots Configuration
 safety_snapshots:
-  # Automatically create snapshots before risky operations
-  auto_create: true
+  # Automatically create stash before risky operations
+  auto_stash: true
   
-  # Snapshot method preference
-  method: "stash"  # Options: stash, worktree
+  # Use worktree isolation for conflict resolution
+  worktree_for_conflicts: true
   
-  # How long to keep snapshots (in days)
+  # Keep snapshots for X days
   retention_days: 7
   
-  # Operations that trigger automatic snapshots
-  trigger_operations:
-    - "rebase"
-    - "merge"
-    - "reset"
-    - "cherry-pick"
-    - "revert"
+  # Maximum number of snapshots to keep
+  max_snapshots: 10
 
-# Repository-specific settings
-repository:
-  name: "mcp-git-orchestrator"
-  type: "library"
-  team: "ai-tools"
+# File and Directory Rules
+file_rules:
+  # Files that require review
+  require_review:
+    - "package.json"
+    - "package-lock.json"
+    - "*.config.js"
+    - "*.config.ts"
+    - "Dockerfile"
+    - ".github/workflows/*"
+    - "*.env.example"
   
-  # Respect existing Git hooks
-  respect_hooks: true
+  # Files that should not be committed
+  forbidden_files:
+    - "*.env"
+    - "*.key"
+    - "*.pem"
+    - "*.p12"
+    - "secrets.json"
+    - ".DS_Store"
+    - "Thumbs.db"
   
-  # Submodule handling
-  submodules:
-    update_strategy: "warn"  # Options: ignore, warn, auto-update
-    require_confirmation: true
+  # Large file warnings (in MB)
+  large_file_threshold: 10
+
+# Code Quality Rules
+quality_rules:
+  # Maximum lines of code per commit
+  max_lines_per_commit: 500
+  
+  # Require tests for new features
+  require_tests_for_features: true
+  
+  # Test file patterns
+  test_patterns:
+    - "*.test.ts"
+    - "*.test.js"
+    - "*.spec.ts"
+    - "*.spec.js"
+    - "__tests__/**/*"
+
+# GitHub Integration (when GITHUB_TOKEN is available)
+github:
+  # Default PR template
+  pr_template: |
+    ## Description
+    Brief description of changes
+    
+    ## Type of Change
+    - [ ] Bug fix
+    - [ ] New feature
+    - [ ] Breaking change
+    - [ ] Documentation update
+    
+    ## Testing
+    - [ ] Tests pass locally
+    - [ ] New tests added for features
+    - [ ] Manual testing completed
+    
+    ## Checklist
+    - [ ] Code follows style guidelines
+    - [ ] Self-review completed
+    - [ ] Comments added for complex logic
+    - [ ] Documentation updated
+  
+  # Auto-assign reviewers based on files changed
+  auto_reviewers:
+    "src/auth/*": ["@security-team"]
+    "src/api/*": ["@backend-team"]
+    "src/ui/*": ["@frontend-team"]
+    "*.md": ["@docs-team"]
+    "package.json": ["@leads"]
+  
+  # Auto-assign labels based on branch or files
+  auto_labels:
+    "feature/*": ["enhancement"]
+    "fix/*": ["bug"]
+    "hotfix/*": ["hotfix", "priority-high"]
+    "docs/*": ["documentation"]
+    "*.test.*": ["tests"]
+
+# Notification Settings
+notifications:
+  # Slack webhook for important events
+  slack_webhook: ""  # Set your webhook URL
+  
+  # Events to notify about
+  notify_on:
+    - force_push_attempt
+    - protected_branch_push
+    - large_commit
+    - failed_prepush_check
+    - policy_violation
+
+# Custom Commands
+custom_commands:
+  # Post-commit hooks
+  post_commit:
+    - "npm run format-staged"
+    - "git add -u"  # Add any formatting changes
+  
+  # Pre-push preparation
+  pre_push:
+    - "npm run update-changelog"
+    - "npm run generate-docs"
+
+# Development Environment
+dev_environment:
+  # Required Node.js version
+  node_version: ">=20.0.0"
+  
+  # Required tools
+  required_tools:
+    - "git"
+    - "node"
+    - "npm"
+  
+  # Recommended VS Code extensions
+  vscode_extensions:
+    - "esbenp.prettier-vscode"
+    - "dbaeumer.vscode-eslint"
+    - "ms-vscode.vscode-typescript-next"
+    - "GitLab.gitlab-workflow"
+
+# Policy Metadata
+metadata:
+  version: "1.0"
+  created: "2024-01-01"
+  updated: "2024-01-01"
+  author: "Development Team"
+  description: "Comprehensive AI VCS policy for safe Git operations"
