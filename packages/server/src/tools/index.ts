@@ -12,3 +12,5 @@ export { ProposeCommitTool } from './propose_commit.js';
 export { StageTool } from './stage.js';
 export { CommitTool } from './commit.js';
 export { PushTool } from './push.js';
+export { BranchTool } from './branch.js';
+export { MergeTool } from './merge.js';

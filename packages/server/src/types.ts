@@ -112,10 +112,7 @@ export interface CommitOptions {
 }
 
 // Branch Types
-export interface BranchResult {
-  current: string;
-  branches: BranchInfo[];
-}
+// BranchResult moved to later section
 
 export interface BranchInfo {
   name: string;
@@ -127,12 +124,7 @@ export interface BranchInfo {
   sha: string;
 }
 
-export interface BranchOptions {
-  op: 'create' | 'switch' | 'delete' | 'list';
-  name?: string;
-  from?: string;
-  force?: boolean;
-}
+// BranchOptions moved to later section
 
 // Stage Types
 export interface StageResult {
@@ -159,21 +151,9 @@ export interface MergeResult {
   conflicts?: ConflictRegion[];
 }
 
-export interface ConflictForecast {
-  file: string;
-  conflictType: 'content' | 'delete/modify' | 'add/add' | 'rename/rename';
-  severity: 'low' | 'medium' | 'high';
-  description: string;
-}
+// ConflictForecast moved to later section
 
-export interface ConflictRegion {
-  file: string;
-  startLine: number;
-  endLine: number;
-  ours: string;
-  theirs: string;
-  base?: string;
-}
+// ConflictRegion moved to later section
 
 export interface MergeOptions {
   target: string;
@@ -301,6 +281,61 @@ export interface PrepushCheck {
   cwd?: string;
 }
 
+// Branch Types
+export interface BranchResult {
+  operation: 'create' | 'switch' | 'delete' | 'list';
+  branch?: string;
+  success: boolean;
+  current?: boolean;
+  from?: string;
+  tracking?: boolean;
+  forced?: boolean;
+  message?: string;
+  branches?: Array<{
+    name: string;
+    current: boolean;
+    remote: boolean;
+    upstream?: string;
+    sha: string;
+  }>;
+}
+
+export interface BranchOptions {
+  operation: 'create' | 'switch' | 'delete' | 'list';
+  name?: string;
+  from?: string;
+  track?: boolean;
+}
+
+// Merge Types
+export interface MergePreflightResult {
+  currentBranch: string;
+  targetBranch: string;
+  strategy: 'merge' | 'rebase' | 'squash';
+  canMerge: boolean;
+  conflicts: ConflictRegion[];
+  forecast: ConflictForecast;
+  policyViolations: string[];
+  analysis?: any;
+}
+
+export interface ConflictForecast {
+  riskLevel: 'low' | 'medium' | 'high';
+  confidence: number;
+  estimatedConflicts: number;
+  recommendations: string[];
+}
+
+export interface ConflictRegion {
+  file: string;
+  type: 'content' | 'binary' | 'mode';
+  severity: 'low' | 'medium' | 'high';
+  lineStart: number;
+  lineEnd: number;
+  description: string;
+  conflictMarkers: number;
+}
+
 // Git Command Types (for allowlist)
 export type AllowedGitCommand = 
   | 'status'
@@ -321,7 +356,9 @@ export type AllowedGitCommand =
   | 'ls-files'
   | 'symbolic-ref'
   | 'remote'
-  | 'apply';
+  | 'apply'
+  | 'merge-base'
+  | 'worktree';
 
 export interface GitExecOptions {
   cwd?: string;
