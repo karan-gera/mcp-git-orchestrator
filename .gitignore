@@ -45,3 +45,6 @@ temp/
 
 # Safety snapshots (for development)
 .safety_marker
+
+# Development progress tracking
+.progress
