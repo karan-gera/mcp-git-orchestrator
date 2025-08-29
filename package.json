@@ -1,0 +1,32 @@
+{
+  "name": "mcp-git-orchestrator",
+  "version": "0.1.0",
+  "description": "Local-first Model Context Protocol (MCP) server for safe, structured Git control",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "clean": "pnpm -r clean"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "git",
+    "orchestrator",
+    "ai",
+    "agents",
+    "version-control"
+  ],
+  "author": "",
+  "license": "MIT"
+}
