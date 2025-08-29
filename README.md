@@ -6,7 +6,7 @@
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)](https://www.typescriptlang.org)
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -68,13 +68,13 @@ pnpm run cli serve --verbose
 GITHUB_TOKEN=your_token_here pnpm serve
 ```
 
-## 🎯 AI Agent Workflow Guide
+## AI Agent Workflow Guide
 
 ### Plan → Review → Execute Pattern
 
 The MCP Git Orchestrator is designed for AI agents to follow a safe three-phase workflow:
 
-#### **Phase 1: Plan** 🧠
+#### **Phase 1: Plan**
 Use analysis tools to understand the current state and plan operations:
 
 ```bash
@@ -95,7 +95,7 @@ propose_commit({ include_analysis: true })
 # Returns: intelligent commit message with scope detection
 ```
 
-#### **Phase 2: Review** 🔍
+#### **Phase 2: Review**
 Test operations safely before execution:
 
 ```bash
@@ -111,7 +111,7 @@ dry_run({
 # Returns: execution transcript, risk analysis, rollback instructions
 ```
 
-#### **Phase 3: Execute** ⚡
+#### **Phase 3: Execute**
 Execute operations with confidence:
 
 ```bash
@@ -140,7 +140,7 @@ pr_create({
 4. **Handle conflicts intelligently**: Use `conflict_map` for merge conflicts
 5. **Maintain clean history**: Follow conventional commits and branch naming
 
-## 🛠️ Available Tools
+## Available Tools
 
 | Tool | Description | Example Use Case |
 |------|-------------|------------------|
@@ -157,7 +157,7 @@ pr_create({
 | `dry_run` | Safe plan execution in isolation | Test complex workflows |
 | `pr_create` | GitHub pull request creation (optional) | Create PRs with diffstat |
 
-## 📋 Policy Configuration
+## Policy Configuration
 
 ### Complete `.ai-vcs-policy.yaml` Schema
 
@@ -345,7 +345,7 @@ quality_rules:
   max_lines_per_commit: 300
 ```
 
-## 🔒 Safety Features
+## Safety Features
 
 ### Core Safety Mechanisms
 - **No Destructive Operations**: No `reset --hard`, `push --force`, or `reflog delete`
@@ -426,7 +426,7 @@ git worktree remove .git/worktrees/mcp-safety-TIMESTAMP
    git checkout -- .
    ```
 
-## 🏃‍♂️ Quickstart Tutorial
+## Quickstart Tutorial
 
 ### Complete Workflow Example
 
@@ -668,7 +668,7 @@ mcp-git pr_create --title "wip: new feature" --draft --reviewers="reviewer1,revi
 mcp-git pr_create --title "hotfix: critical bug" --base="release" --labels="hotfix,critical"
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 mcp-git-orchestrator/
@@ -716,7 +716,7 @@ mcp-git-orchestrator/
 - **Conflict Analysis**: Advanced conflict detection and resolution guidance
 - **GitHub Integration**: Optional PR creation and management
 
-## 🧪 Development
+## Development
 
 ### Commands
 
@@ -779,7 +779,7 @@ if (result.success) {
 }
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -805,7 +805,7 @@ mcp-git test
 mcp-git version
 ```
 
-## 🎯 Use Cases
+## Use Cases
 
 ### For AI Agents
 - **Safe Git Operations**: Perform Git commands without repository corruption risk
@@ -819,7 +819,7 @@ mcp-git version
 - **Branch Management**: Enforce naming conventions and protection rules
 - **Safe Automation**: Automated Git operations with comprehensive safety nets
 
-## 📚 API Reference
+## API Reference
 
 Each tool returns a consistent interface:
 
@@ -885,7 +885,7 @@ interface ToolResult<T> {
 }
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
@@ -901,12 +901,6 @@ interface ToolResult<T> {
 - Ensure all safety mechanisms are maintained
 - Test with real repositories using acceptance tests
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Model Context Protocol](https://modelcontextprotocol.io/) for the foundational protocol
-- [Anthropic](https://www.anthropic.com/) for MCP development and tooling
-- The Git community for comprehensive version control capabilities
