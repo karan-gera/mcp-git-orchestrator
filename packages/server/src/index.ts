@@ -24,7 +24,9 @@ import {
   BranchTool,
   MergeTool,
   ConflictMapTool,
-  DryRunTool
+  DryRunTool,
+  PrCreateTool,
+  isPrCreateAvailable
 } from './tools/index.js';
 
 const server: Server = new Server(
@@ -39,8 +41,8 @@ const server: Server = new Server(
   }
 );
 
-// Initialize all tools
-const tools = {
+// Initialize all tools (conditionally include PR creation if GitHub is available)
+const tools: Record<string, any> = {
   repo_overview: new RepoOverviewTool(),
   status: new StatusTool(),
   diff: new DiffTool(),
@@ -53,6 +55,11 @@ const tools = {
   conflict_map: new ConflictMapTool(),
   dry_run: new DryRunTool()
 };
+
+// Conditionally add PR creation tool if GitHub integration is available
+if (isPrCreateAvailable()) {
+  tools.pr_create = new PrCreateTool();
+}
 
 // Register tool list handler
 server.setRequestHandler(ListToolsRequestSchema, async () => {

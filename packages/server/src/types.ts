@@ -421,6 +421,48 @@ export interface GitPlanStep {
   optional?: boolean; // Whether failure should stop execution
 }
 
+// GitHub PR Types
+export interface PullRequestResult {
+  url: string;
+  number: number;
+  title: string;
+  body: string;
+  head: string;
+  base: string;
+  state: 'open' | 'closed' | 'merged';
+  createdAt: string;
+  diffstat?: DiffStat;
+  checks?: PullRequestCheck[];
+}
+
+export interface PullRequestCheck {
+  name: string;
+  status: 'pending' | 'success' | 'failure' | 'error';
+  conclusion?: string;
+  url?: string;
+  description?: string;
+}
+
+export interface DiffStat {
+  files: number;
+  additions: number;
+  deletions: number;
+  changedFiles: string[];
+}
+
+export interface PullRequestOptions {
+  title: string;
+  body?: string;
+  head?: string; // Default: current branch
+  base?: string; // Default: from policy or 'main'
+  draft?: boolean;
+  maintainer_can_modify?: boolean;
+  labels?: string[];
+  assignees?: string[];
+  reviewers?: string[];
+  milestone?: number;
+}
+
 // Git Command Types (for allowlist)
 export type AllowedGitCommand = 
   | 'status'

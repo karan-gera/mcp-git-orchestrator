@@ -169,6 +169,11 @@ program
         name: 'dry_run',
         description: 'Execute Git operation plans safely in isolated temporary worktrees',
         example: 'Test complex Git workflows without affecting main repository'
+      },
+      {
+        name: 'pr_create',
+        description: 'Create GitHub pull requests with policy integration (requires GITHUB_TOKEN)',
+        example: 'Create PRs with automated diffstat and CI status integration'
       }
     ];
 
@@ -181,6 +186,8 @@ program
 
     console.log('Usage: Use these tools through MCP-compatible clients like Cursor.');
     console.log('Each tool returns JSON data with human-readable summaries.');
+    console.log('');
+    console.log('Note: pr_create requires GITHUB_TOKEN environment variable for GitHub integration.');
   });
 
 program
@@ -190,8 +197,8 @@ program
     console.log(`MCP Git Orchestrator CLI v${packageJson.version}`);
     console.log(`Server: @mcp-git-orchestrator/server v${packageJson.version}`);
     console.log('');
-    console.log('Tools: 11 Git operations with advanced safety mechanisms');
-    console.log('Features: Policy enforcement, conflict analysis, dry-run execution');
+    console.log('Tools: 11+ Git operations with advanced safety mechanisms');
+    console.log('Features: Policy enforcement, conflict analysis, dry-run execution, GitHub integration');
   });
 
 program

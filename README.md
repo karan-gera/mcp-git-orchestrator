@@ -61,6 +61,42 @@ pnpm serve
 
 # Start with verbose logging
 pnpm run cli serve --verbose
+
+# Start with GitHub integration
+GITHUB_TOKEN=your_token_here pnpm serve
+```
+
+### GitHub Integration (Optional)
+
+The MCP Git Orchestrator includes optional GitHub integration for pull request creation. To enable:
+
+1. **Create a GitHub Personal Access Token:**
+   - Go to GitHub Settings → Developer settings → Personal access tokens
+   - Create a token with `repo` scope for private repositories
+   - For public repositories, `public_repo` scope is sufficient
+
+2. **Set the Environment Variable:**
+   ```bash
+   export GITHUB_TOKEN=your_token_here
+   ```
+
+3. **Available Features:**
+   - **Pull Request Creation**: Create PRs with automated diffstat and CI status
+   - **Policy Integration**: Respects repository policies for base branches
+   - **Rich Descriptions**: Auto-generated PR bodies with change summaries
+   - **Label & Reviewer Support**: Assign labels, reviewers, and assignees
+   - **Draft PR Support**: Create draft PRs for work-in-progress features
+
+**Example Usage:**
+```bash
+# Create a simple PR
+mcp-git pr_create --title "feat: add new feature" --body "Detailed description"
+
+# Create a draft PR with reviewers
+mcp-git pr_create --title "wip: new feature" --draft --reviewers="reviewer1,reviewer2"
+
+# Create PR targeting specific branch
+mcp-git pr_create --title "hotfix: critical bug" --base="release" --labels="hotfix,critical"
 ```
 
 ## 🛠️ Available Tools
@@ -78,6 +114,7 @@ pnpm run cli serve --verbose
 | `merge` | Conflict analysis and forecasting | Pre-merge risk assessment |
 | `conflict_map` | Conflict marker detection | Resolve merge conflicts |
 | `dry_run` | Safe plan execution in isolation | Test complex workflows |
+| `pr_create` | GitHub pull request creation (optional) | Create PRs with diffstat |
 
 ## 🔒 Safety Features
 
@@ -226,6 +263,7 @@ if (result.success) {
 - `MCP_GIT_VERBOSE`: Enable verbose logging (set to "1")
 - `MCP_GIT_POLICY_PATH`: Custom path to policy file
 - `MCP_GIT_TIMEOUT`: Default operation timeout (seconds)
+- `GITHUB_TOKEN`: GitHub personal access token (enables `pr_create` tool)
 
 ### CLI Commands
 
