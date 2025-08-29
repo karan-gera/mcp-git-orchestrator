@@ -199,20 +199,7 @@ export interface StashOptions {
   patch?: boolean;
 }
 
-// Dry Run Types
-export interface GitPlanStep {
-  operation: string;
-  args: string[];
-  description: string;
-  riskLevel: 'safe' | 'medium' | 'high';
-}
-
-export interface DryRunResult {
-  ok: boolean;
-  transcript: string[];
-  warnings: string[];
-  errors: string[];
-}
+// Legacy dry run types (replaced by more comprehensive ones below)
 
 // Error Types
 export interface GitError {
@@ -374,6 +361,66 @@ export interface ResolutionSuggestion {
   files: string[];
 }
 
+// Dry Run Types
+export interface DryRunResult {
+  planValid: boolean;
+  transcript: DryRunTranscript[];
+  summary: DryRunSummary;
+  rollbackInstructions?: string[];
+}
+
+export interface DryRunTranscript {
+  step: number;
+  operation: GitPlanStep;
+  status: 'success' | 'failure' | 'warning' | 'skipped';
+  output: string;
+  changes?: DryRunChanges;
+  duration: number;
+  timestamp: string;
+  warnings?: string[];
+  errors?: string[];
+}
+
+export interface DryRunSummary {
+  totalSteps: number;
+  successfulSteps: number;
+  failedSteps: number;
+  warningSteps: number;
+  skippedSteps: number;
+  estimatedDuration: number;
+  riskLevel: 'low' | 'medium' | 'high';
+  recommendedActions: string[];
+}
+
+export interface DryRunChanges {
+  filesAdded: string[];
+  filesModified: string[];
+  filesDeleted: string[];
+  branchesCreated: string[];
+  branchesDeleted: string[];
+  commits: DryRunCommit[];
+}
+
+export interface DryRunCommit {
+  sha: string;
+  message: string;
+  author: string;
+  timestamp: string;
+  changes: {
+    insertions: number;
+    deletions: number;
+    files: number;
+  };
+}
+
+export interface GitPlanStep {
+  operation: 'stage' | 'commit' | 'branch' | 'merge' | 'push' | 'pull' | 'rebase' | 'stash' | 'reset';
+  args: Record<string, any>;
+  description?: string;
+  dependencies?: number[]; // Indices of steps this depends on
+  optional?: boolean; // Whether failure should stop execution
+}
+
 // Git Command Types (for allowlist)
 export type AllowedGitCommand = 
   | 'status'
@@ -387,6 +434,8 @@ export type AllowedGitCommand =
   | 'rebase'
   | 'merge'
   | 'push'
+  | 'pull'
+  | 'reset'
   | 'stash'
   | 'rev-parse'
   | 'log'

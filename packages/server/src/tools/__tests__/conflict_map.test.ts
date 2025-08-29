@@ -2,7 +2,7 @@
  * Conflict Map Tool Tests
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ConflictMapTool } from '../conflict_map.js';
 import { gitExec } from '../../git/index.js';
 import { writeFile, mkdir, rm } from 'fs/promises';
@@ -24,9 +24,9 @@ vi.mock('../../git/index.js', () => ({
   }
 }));
 
-// Mock the parser
-const mockParseGitStatus = vi.fn();
-vi.mocked(vi.importActual('../../git/index.js')).parseGitStatus = mockParseGitStatus;
+// Import the mocked parser
+import { parseGitStatus } from '../../git/index.js';
+const mockParseGitStatus = vi.mocked(parseGitStatus);
 
 describe('ConflictMapTool', () => {
   let tool: ConflictMapTool;
@@ -45,7 +45,7 @@ describe('ConflictMapTool', () => {
     mockGitExec.isValidRepository.mockResolvedValue(true);
     mockParseGitStatus.mockReturnValue({
       staged: [
-        { path: 'src/conflicted.ts', status: 'UU' }
+        { path: 'src/conflicted.ts', status: 'unmerged' }
       ],
       unstaged: [],
       untracked: []

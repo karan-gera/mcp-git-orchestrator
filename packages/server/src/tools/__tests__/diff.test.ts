@@ -21,9 +21,9 @@ vi.mock('../../git/index.js', () => ({
   }
 }));
 
-// Mock the parser
-const mockParseGitDiff = vi.fn();
-vi.mocked(vi.importActual('../../git/index.js')).parseGitDiff = mockParseGitDiff;
+// Import the mocked parser
+import { parseGitDiff } from '../../git/index.js';
+const mockParseGitDiff = vi.mocked(parseGitDiff);
 
 describe('DiffTool', () => {
   let tool: DiffTool;
