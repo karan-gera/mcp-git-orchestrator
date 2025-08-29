@@ -302,11 +302,18 @@ export class PolicyLoader {
   /**
    * Get prepush checks that should be run
    */
-  getPrepushChecks(policy: AiVcsPolicy, requireRequired = false): typeof policy.prepush_checks {
-    if (requireRequired) {
-      return policy.prepush_checks.filter(check => check.required);
+  getPrepushChecks(policy: AiVcsPolicy, requiredOnly = false): any[] {
+    const checks = policy.prepush_checks || [];
+    if (requiredOnly) {
+      return checks.filter(check => check.required);
     }
-    return policy.prepush_checks;
+    return checks.map(check => ({
+      name: check.name,
+      command: check.command,
+      required: check.required,
+      timeout: check.timeout || 300,
+      cwd: check.cwd
+    }));
   }
 }
 

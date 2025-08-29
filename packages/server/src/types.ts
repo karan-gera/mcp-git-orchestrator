@@ -182,20 +182,7 @@ export interface MergeOptions {
   squash?: boolean;
 }
 
-// Push Types
-export interface PushResult {
-  remote: string;
-  branch: string;
-  outcome: 'success' | 'rejected' | 'up-to-date';
-  summary?: string;
-}
-
-export interface PushOptions {
-  remote?: string;
-  branch?: string;
-  force?: false; // Explicitly never allow force push
-  setUpstream?: boolean;
-}
+// Push Types (moved to later section)
 
 // Log Types
 export interface LogEntry {
@@ -264,6 +251,56 @@ export interface SafetySnapshot {
   createdAt: string;
 }
 
+// Staging Types
+export interface StageResult {
+  stagedCount: number;
+  files: string[];
+}
+
+export interface StageOptions {
+  paths?: string[];
+  hunks?: HunkSelector[];
+  patch?: boolean;
+}
+
+// Commit Types
+export interface CommitResult {
+  sha: string;
+  message: string;
+  author: string;
+  date: string;
+}
+
+export interface CommitOptions {
+  message: string;
+  sign?: boolean;
+  noVerify?: boolean;
+  amend?: boolean;
+}
+
+// Push Types
+export interface PushResult {
+  remote: string;
+  branch: string;
+  outcome: 'success' | 'rejected' | 'up-to-date';
+  summary: string;
+}
+
+export interface PushOptions {
+  remote?: string;
+  branch?: string;
+  setUpstream?: boolean;
+}
+
+// Pre-push Check Types
+export interface PrepushCheck {
+  name: string;
+  command: string;
+  required: boolean;
+  timeout: number;
+  cwd?: string;
+}
+
 // Git Command Types (for allowlist)
 export type AllowedGitCommand = 
   | 'status'
@@ -283,7 +320,8 @@ export type AllowedGitCommand =
   | 'show'
   | 'ls-files'
   | 'symbolic-ref'
-  | 'remote';
+  | 'remote'
+  | 'apply';
 
 export interface GitExecOptions {
   cwd?: string;
